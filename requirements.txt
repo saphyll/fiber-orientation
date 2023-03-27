@@ -1,0 +1,6 @@
+numpy~=1.20
+scikit-image
+Pillow
+matplotlib
+opencv-python
+czifile
