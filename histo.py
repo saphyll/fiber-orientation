@@ -196,16 +196,14 @@ def _lhe_variants(input, area_num, type=lhe_type.LHE, alpha=0.5, beta=0.8):
     #interpolate mapped images
     mapped_images = mapped_images.reshape(4,input.shape[0], input.shape[1])
     offset_directions = [[1,1],[1,0],[0,1],[0,0]]
-    out_weights = []
     for i in range(4):
         mapped_image = mapped_images[i]
         weight_offsets = offset_directions[i] * (area_size - area_size%2)
-        padded_weights = np.pad(weight_function, (area_size[0]//2,area_size[1]//2))
+        padded_weights = np.pad(weight_function, [(area_size[0]//2,area_size[0]//2),(area_size[1]//2,area_size[1]//2)])
         weights = padded_weights[weight_offsets[0]:input.shape[0]+weight_offsets[0], weight_offsets[1]:input.shape[1]+weight_offsets[1]]
-        out_weights.append(weights)
         output = output + weights * mapped_image
 
-    return output, mapped_images[1], out_weights[1]
+    return output
 
 def triangle(period, list_length):
     """
