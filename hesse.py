@@ -35,9 +35,9 @@ def compute_frangi(input, scales, blobness=0.5, get_directions=False):
 
     #padding to catch and later cut off artifacts at image borders
     pad = int(np.max(scales)*2)
-    pad_left = pad
-    pad_right = input.shape[0] + pad
-    input = np.pad(input, pad, mode='edge')
+    pad_x = (pad, input.shape[0] + pad)
+    pad_y = (pad, input.shape[1] + pad)
+    input = np.pad(input, [pad_x, pad_y], mode='edge')
 
     for i, scale in enumerate(scales):
         eigenvals, eigenvects = _get_hessian_eigvals(input, scale, sorted_by_abs=True)
@@ -51,9 +51,9 @@ def compute_frangi(input, scales, blobness=0.5, get_directions=False):
         abs_eigen2 = np.abs(eigenvals[1]) + 1e-10 #avoid division by 0
         blob_ratios = abs_eigen1 / abs_eigen2
         result = np.where(eigenvals[1] > 0, 0, np.exp(-blob_ratios**2/2*blobness**2) * (1-np.exp(-norm**2/(2*c**2))))
-        results[i] = result[pad_left:pad_right,pad_left:pad_right]
+        results[i] = result[pad_x[0]:pad_x[1],pad_y[0]:pad_y[1]]
         if get_directions == True:
-            directions[i] = _get_eigvect_directions(eigenvects)[pad_left:pad_right,pad_left:pad_right]
+            directions[i] = _get_eigvect_directions(eigenvects)[pad_x[0]:pad_x[1],pad_y[0]:pad_y[1]]
         
         print("Finished scale = %i"%(scale))
 
@@ -98,9 +98,9 @@ def compute_meijering(input, scale, get_directions=False, sorted_by_abs=False):
 
     #padding to catch and later cut off artifacts at image borders
     pad = int(scale*2)
-    pad_left = pad
-    pad_right = input.shape[0] + pad
-    input = np.pad(input, pad, mode='edge')
+    pad_x = (pad, input.shape[0] + pad)
+    pad_y = (pad, input.shape[1] + pad)
+    input = np.pad(input, [pad_x, pad_y], mode='edge')
 
     eigenvals, eigenvects = _get_hessian_eigvals(input, scale)
 
@@ -109,10 +109,10 @@ def compute_meijering(input, scale, get_directions=False, sorted_by_abs=False):
     max_mod_eigens = np.where(np.abs(mod_eigens_1) > np.abs(mod_eigens_2), mod_eigens_1, mod_eigens_2)
     min_mod_eigen = np.min(np.minimum(mod_eigens_1, mod_eigens_2))
     out_image = np.where(max_mod_eigens < 0, max_mod_eigens/min_mod_eigen, 0)
-    out_image = out_image[pad_left:pad_right,pad_left:pad_right]
+    out_image = out_image[pad_x[0]:pad_x[1],pad_y[0]:pad_y[1]]
 
     if get_directions == True:
-        out_directions = _get_eigvect_directions(eigenvects)[pad_left:pad_right,pad_left:pad_right]
+        out_directions = _get_eigvect_directions(eigenvects)[pad_x[0]:pad_x[1],pad_y[0]:pad_y[1]]
         return out_image, out_directions
     else:
         return out_image
@@ -150,9 +150,9 @@ def compute_rvr(input, scales, tau, get_directions=False, white_ridges=True):
 
     #padding to catch and later cut off artifacts at image borders
     pad = int(np.max(scales)*2)
-    pad_left = pad
-    pad_right = input.shape[0] + pad
-    input = np.pad(input, pad, mode='edge')
+    pad_x = (pad, input.shape[0] + pad)
+    pad_y = (pad, input.shape[1] + pad)
+    input = np.pad(input, [pad_x, pad_y], mode='edge')
 
     for i, scale in enumerate(scales):
         eigenvals, eigenvects = _get_hessian_eigvals(input, scale, sorted_by_abs=True, white_ridges_rvr=white_ridges)
@@ -168,9 +168,9 @@ def compute_rvr(input, scales, tau, get_directions=False, white_ridges=True):
         result =  np.where(eigen2 >= regular_eigen/2, 1, eigen2**2 * (regular_eigen - eigen2) * (3/(eigen2+regular_eigen))**2)
         result =  np.where(eigen2 <= 0, 0, result)
         result =  np.where(regular_eigen <= 0, 0, result)
-        results[i] = result[pad_left:pad_right,pad_left:pad_right]
+        results[i] = result[pad_x[0]:pad_x[1],pad_y[0]:pad_y[1]]
         if get_directions == True:
-            directions[i] = _get_eigvect_directions(eigenvects)[pad_left:pad_right,pad_left:pad_right]
+            directions[i] = _get_eigvect_directions(eigenvects)[pad_x[0]:pad_x[1],pad_y[0]:pad_y[1]]
 
         print("Finished sigma %i"%scale)
         
@@ -254,11 +254,12 @@ def sort_by_abs(input, scale, axis=0):
     return eigvals[tuple(index)]
 
 def _get_eigvect_directions(eigvects):
-    """Caculates the directions of eigenvectors."""
+    """Caculates the directions of the eigenvectors corresponding to the 
+    eigenvalues with smallest absolute value."""
     cartesians = eigvects[0,:,:,:]
     theta = np.arctan2(cartesians[:,:,1],cartesians[:,:,0])
     theta = np.rad2deg(theta)
-    theta = np.where(theta < 0, theta + 180, theta)
+    theta = np.where(theta < 0, theta + 180, theta) 
     return theta
 
 #Skimage functions, modified to also return eigenvectors
@@ -270,7 +271,8 @@ def _symmetric_compute_eigenvalues(S_elems):
     # eigvalsh returns eigenvalues in increasing order. We want decreasing
     eigs, vects = np.linalg.eigh(matrices)
     eigs = eigs[..., ::-1]
-    vects = vects[..., ::-1]
+    vects = vects[..., ::-1, :]
+    # transpose eigenvalues to shape (2, image.shape) and eigenvectors to (2, image.shape, 2)
     leading_axes_eig = tuple(range(eigs.ndim - 1))
     leading_axes_vects = tuple(range(vects.ndim - 1))
     return np.transpose(eigs, (eigs.ndim - 1,) + leading_axes_eig), np.transpose(vects, (vects.ndim - 1,) + leading_axes_vects)
