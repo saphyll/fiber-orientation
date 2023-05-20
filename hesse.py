@@ -4,7 +4,7 @@ from itertools import combinations_with_replacement
 
 def compute_frangi(input, scales, blobness=0.5, get_directions=False):
     """
-    Frangi Filter (TODO:Source) for 2D images.
+    Frangi Filter [1]_ for 2D images.
 
     Parameters
     ----------
@@ -27,6 +27,15 @@ def compute_frangi(input, scales, blobness=0.5, get_directions=False):
         Filtered image.
     out_directions : 2D ndarray, optional
         Direction of lowest curvature for each pixel.
+
+    References
+    ----------
+    .. [1] Frangi, A.F., Niessen, W.J., Vincken, K.L., Viergever, M.A. (1998). 
+        Multiscale vessel enhancement filtering. In: Wells, W.M., Colchester, A., 
+        Delp, S. (eds) Medical Image Computing and Computer-Assisted Intervention 
+        — MICCAI’98. MICCAI 1998. Lecture Notes in Computer Science, vol 1496. 
+        Springer, Berlin, Heidelberg.
+        :DOI:`10.1007/BFb0056195`
     """
     results = np.empty(scales.shape + input.shape)
     out_image = np.empty(input.shape)
@@ -70,7 +79,7 @@ def compute_frangi(input, scales, blobness=0.5, get_directions=False):
 
 def compute_meijering(input, scale, get_directions=False, sorted_by_abs=False):
     """
-    Meijering Filter (TODO:Source) for 2D images.
+    Meijering Filter [1]_ for 2D images.
 
     Parameters
     ----------
@@ -93,6 +102,13 @@ def compute_meijering(input, scale, get_directions=False, sorted_by_abs=False):
         Filtered image.
     out_directions : 2D ndarray, optional
         Direction of lowest curvature for each pixel.
+
+    References
+    ----------
+    .. [1] Meijering, E., Jacob, M., Sarria, J.-.-C.F., Steiner, P., Hirling, H. and 
+    Unser, M. (2004), Design and validation of a tool for neurite tracing and 
+    analysis in fluorescence microscopy images. Cytometry, 58A: 167-176. 
+    :DOI:`10.1002/cyto.a.20022`
     """
     out_image = np.empty(input.shape)
 
@@ -119,7 +135,7 @@ def compute_meijering(input, scale, get_directions=False, sorted_by_abs=False):
 
 def compute_rvr(input, scales, tau, get_directions=False, white_ridges=True):
     """
-    Filter nach Jerman et al. (TODO:Source) for 2D images.
+    Filter nach Jerman et al. [1]_ for 2D images.
 
     Parameters
     ----------
@@ -142,6 +158,13 @@ def compute_rvr(input, scales, tau, get_directions=False, white_ridges=True):
         Filtered image.
     out_directions : 2D ndarray, optional
         Direction of lowest curvature for each pixel.
+
+    References
+    ----------
+    .. [1] T. Jerman, F. Pernuš, B. Likar and Ž. Špiclin, "Enhancement of Vascular 
+        Structures in 3D and 2D Angiographic Images," in IEEE Transactions on 
+        Medical Imaging, vol. 35, no. 9, pp. 2107-2118, Sept. 2016.
+        :DOI:`10.1109/TMI.2016.2550102`
     """
     results = np.empty(scales.shape + input.shape)
     out_image = np.empty(input.shape)
@@ -266,7 +289,10 @@ def _get_eigvect_directions(eigvects):
 
 def _symmetric_compute_eigenvalues(S_elems):
     """Custom Variant of Scikit-image code.
-    TODO: Link"""
+
+    References
+    ----------
+    https://github.com/scikit-image/scikit-image/blob/v0.20.0/skimage/feature/corner.py#L383"""
     matrices = _symmetric_image(S_elems)
     # eigvalsh returns eigenvalues in increasing order. We want decreasing
     eigs, vects = np.linalg.eigh(matrices)
@@ -279,7 +305,10 @@ def _symmetric_compute_eigenvalues(S_elems):
     
 def _symmetric_image(S_elems):
     """Custom Variant of Scikit-image code
-    TODO: Link"""
+
+    References
+    ----------
+    https://github.com/scikit-image/scikit-image/blob/v0.20.0/skimage/feature/corner.py#L417"""
     image = S_elems[0]
     symmetric_image = np.zeros(image.shape + (image.ndim, image.ndim),
                                dtype=S_elems[0].dtype)
