@@ -3,10 +3,6 @@ from skimage.feature import hessian_matrix
 from itertools import combinations_with_replacement
 
 class Hessian:
-    scale = None
-    eigenvalues = None
-    eigenvectors = None
-
     def __init__(self, input, scale) -> None:
         """
         Generates the Hessian matrix for a given image and scale.
@@ -34,6 +30,27 @@ class Hessian:
         self.eigenvalues, self.eigenvectors = self._compute_hessian(input)
         return
 
+    def _compute_hessian(self, input):
+        """
+        Calculates eigenvalues and eigenvectors for the given input image.
+
+        Parameters
+        ----------
+        input : 2D ndarray
+            Image that will be filtered.    
+
+        Returns
+        -------
+        eigenvalues : ndarray
+            Eigenvalues of the input.
+        eigenvectors : ndarray, optional
+            Eigenvectors of the input.
+        """
+        hessian = hessian_matrix(input, sigma=self.scale)
+        eigenvalues, eigenvectors = self._symmetric_compute_eigenvalues(hessian)
+
+        return eigenvalues, eigenvectors
+    
     def get_eigenvalues(self, sorted_by_abs=False, invert=False):
         """
         Returns the eigenvalues with optional preprocessing.
@@ -58,27 +75,16 @@ class Hessian:
             
         return eigenvalues
 
-    def _compute_hessian(self, input):
-        """
-        Calculates eigenvalues and eigenvectors for the given input image.
-
-        Parameters
-        ----------
-        input : 2D ndarray
-            Image that will be filtered.    
-
-        Returns
-        -------
-        eigenvalues : ndarray
-            Eigenvalues of the input.
-        eigenvectors : ndarray, optional
-            Eigenvectors of the input.
-        """
-        hessian = hessian_matrix(input, sigma=self.scale)
-        eigenvalues, eigenvectors = self._symmetric_compute_eigenvalues(hessian)
-
-        return eigenvalues, eigenvectors
-
+    def get_eigenvector_directions(self):
+        """Caculates directions of the eigenvectors corresponding to the 
+        eigenvalues with smallest absolute value."""
+        _, eigenvectors = self._sort_by_abs()
+        cartesians = eigenvectors[0,:,:,:]
+        theta = np.arctan2(cartesians[:,:,1],cartesians[:,:,0])
+        theta = np.rad2deg(theta)
+        theta = np.where(theta < 0, theta + 180, theta) 
+        return theta
+    
     def _sort_by_abs(self):
         """
         Returns copies of eigenvalues and eigenvectors, sorted by their absolute value.
@@ -92,17 +98,6 @@ class Hessian:
 
         # Return abs sorted array
         return self.eigenvalues[tuple(index)], self.eigenvectors[tuple(index)]
-
-
-    def get_eigenvector_directions(self):
-        """Caculates directions of the eigenvectors corresponding to the 
-        eigenvalues with smallest absolute value."""
-        _, eigenvectors = self._sort_by_abs()
-        cartesians = eigenvectors[0,:,:,:]
-        theta = np.arctan2(cartesians[:,:,1],cartesians[:,:,0])
-        theta = np.rad2deg(theta)
-        theta = np.where(theta < 0, theta + 180, theta) 
-        return theta
 
     #Skimage functions, modified to also return eigenvectors
     def _symmetric_compute_eigenvalues(self, S_elems):
@@ -137,9 +132,6 @@ class Hessian:
         return symmetric_image
 
 class Frangi:
-    scales = None
-    blobness = None
-
     def __init__(self, scales, blobness) -> None:
         """
         Filter by Frangi et al. [1]_ for 2D images.
@@ -227,8 +219,6 @@ class Frangi:
 
 
 class Meijering:
-    scale = None
-
     def __init__(self, scale) -> None:
         """
         Filter by Meijering et al. [1]_ for 2D images.
