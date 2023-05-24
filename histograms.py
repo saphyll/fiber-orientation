@@ -3,7 +3,8 @@ import numpy as np
 class LHE:
     def __init__(self, area_num) -> None:
         """
-        Adaptive Histogram Equalization filter for a 16-bit grayscale image.
+        Adaptive Histogram Equalization filter as described in [1]_ for 16-bit 
+        grayscale images.
 
         Parameters
         ----------
@@ -11,6 +12,15 @@ class LHE:
             Number of sample points/areas for interpolation in x-/y-direction 
             respectively. Odd numbers will be converted to the next lower even 
             number.
+
+        References
+        ----------
+        .. [1] Stephen M. Pizer, E. Philip Amburn, John D. Austin, Robert 
+        Cromartie, Ari Geselowitz, Trey Greer, Bart ter Haar Romeny, John B. 
+        Zimmerman, Karel Zuiderveld, Adaptive histogram equalization and its 
+        variations, Computer Vision, Graphics, and Image Processing, Volume 39, 
+        Issue 3, 1987, Pages 355-368, ISSN 0734-189X.
+        :DOI:`10.1016/S0734-189X(87)80186-X`
         """
         if area_num%2 != 0:
             self.area_num = area_num - 1
@@ -135,8 +145,8 @@ class LHE:
 class CLAHE(LHE):
     def __init__(self, area_num, beta) -> None:
         """
-        Contrast Limited Adaptive Histogram Equalization [1]_ filter for a 
-        16-bit grayscale image.
+        Contrast Limited Adaptive Histogram Equalization [1]_ filter for 
+        16-bit grayscale images.
 
         Parameters
         ----------
@@ -196,8 +206,8 @@ class CLAHE(LHE):
 class CLHE(LHE):
     def __init__(self, area_num, alpha) -> None:
         """
-        Constrained Local Histogram Equalization [1]_ filter for a 16-bit grayscale 
-        image.
+        Constrained Local Histogram Equalization [1]_ filter for 16-bit grayscale 
+        images.
 
         Parameters
         ----------
@@ -249,7 +259,7 @@ class CLHE(LHE):
 class GHE:
     def __init__(self) -> None:
         """
-        Global Histogram Equalization filter for a 16-bit grayscale image.
+        Global Histogram Equalization filter for 16-bit grayscale images.
         """
 
     def compute(input):
