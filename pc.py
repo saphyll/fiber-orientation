@@ -1,5 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
+from hessian import Hessian
 
 class Log_Gabor:
     def __init__(self, orientations, scales) -> None:
@@ -123,9 +124,8 @@ class PC:
                                                                          self.cutoff,
                                                                          self.gain,
                                                                          self.mode)
-   
-    
-    def compute(self, input):
+        
+    def compute(self, input, get_directions=False):
         """
         Computes filter results for the given image.
 
@@ -140,23 +140,43 @@ class PC:
                 and scales as defined in [1]_.
             max
                 Calculates the maximum of phase congruency of all separate scales.
-
+        get_directions : bool, optional
+            Returns the direction perpendicular to highest intensity curvature 
+            for each pixel in addition to the filtered image.
+                
         Returns
         -------
         phase_congruencies : 2D ndarray
             Phase congruency values for the chosen mode.
+        direction_map : 2D ndarray, optional
+            Direction perpendicular to highest intensity curvature for each pixel. 
+            This value is calculated using the hessian matrix of the image with the 
+            maximum scale used for PC calculation.
 
         References
         ----------
         .. [1] Kovesi, Peter. “Image Features from Phase Congruency.” (1995).
         """
         if self.mode == 'sum':
-            return self._compute_pc(input)
+            phase_congruencies = self._compute_pc(input)
+            if self.get_direction == False:
+                return phase_congruencies
+            else:
+                hessian = Hessian(input, np.max(self.scales))
+                direction_map = hessian.get_eigenvector_directions()
+                return phase_congruencies, direction_map
+
         if self.mode == 'max':
             phase_congruencies = np.empty(self.scales.shape + input.shape)
             for i, scale in enumerate(self.scales):
                 phase_congruencies[i] = self._compute_pc(input, scale)
-            return np.max(phase_congruencies, axis=0)
+            phase_congruencies = np.max(phase_congruencies, axis=0)
+            if get_directions == False:
+                return phase_congruencies
+            else:
+                hessian = Hessian(input, np.max(self.scales))
+                direction_map = hessian.get_eigenvector_directions()
+                return phase_congruencies, direction_map
 
     def _compute_pc(self, input, scale=None):
         """

@@ -36,8 +36,26 @@ class AGK:
         """
         self.scales = scales 
         self.anisotropies = anisotropies
-        self.orientations = np.arange(0, (orientations_num-1)*np.pi/orientations_num, np.pi/orientations_num)
+        self.orientations = np.arange(0, (orientations_num)*np.pi/orientations_num, np.pi/orientations_num)
         self.kernels = self._create_kernels()
+
+    def _create_kernels(self):
+        kernels = []
+        for orientation in self.orientations:
+            kernels_per_orientation = []
+            for scale in self.scales:
+                kernel_size = max(self.scales)*6 + 1
+                kernel = np.zeros((kernel_size, kernel_size))
+                for anisotropy in self.anisotropies:
+                    it = np.nditer(kernel, flags=['multi_index'])
+                    for _ in it:
+                        kernel_index_x = it.multi_index[0] - np.floor(kernel_size/2)
+                        kernel_index_y = it.multi_index[1] - np.floor(kernel_size/2)
+                        x, y = self._phi(orientation, anisotropy, kernel_index_x, kernel_index_y)
+                        kernel[it.multi_index[0], it.multi_index[1]] = self._gk(scale, x, y)
+                    kernels_per_orientation.append(self._normalize(kernel))
+            kernels.append(kernels_per_orientation)
+        return kernels
     
     def get_descriptor(self):
         return "agk_scales{}-{}_anisotropies{}-{}_orientations{}".format(np.min(self.scales), 
@@ -58,8 +76,8 @@ class AGK:
         invert : bool
             Inverts kernel intensities for detection of bright lines.
         get_directions : bool, optional
-            Returns the direction of lowest curvature for each pixel in addition 
-            to the filtered image.
+            Returns the direction perpendicular to highest curvature for each 
+            pixel in addition to the filtered image.
 
         Returns
         -------

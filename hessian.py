@@ -172,15 +172,15 @@ class Frangi:
         input : 2D ndarray
             Image that will be filtered.
         get_directions : bool, optional
-            Returns the direction of lowest curvature for each pixel in addition 
-            to the filtered image.
+            Returns the direction perpendicular to highest intensity curvature 
+            for each pixel in addition to the filtered image.
 
         Returns
         -------
         out_image : 2D ndarray
             Filtered image.
         out_directions : 2D ndarray, optional
-            Direction of lowest curvature for each pixel.
+            Direction perpendicular to highest intensity curvature for each pixel.
         """
         results = np.empty(self.scales.shape + input.shape)
         out_image = np.empty(input.shape)
@@ -257,15 +257,15 @@ class Meijering:
         input : 2D ndarray
             Image that will be filtered.
         get_directions : bool, optional
-            Returns the direction of lowest curvature for each pixel in addition 
-            to the filtered image.
+            Returns the direction perpendicular to highest intensity curvature for 
+            each pixel in addition to the filtered image.
 
         Returns
         -------
         out_image : 2D ndarray
             Filtered image.
         out_directions : 2D ndarray, optional
-            Direction of lowest curvature for each pixel.
+            Direction perpendicular to highest intensity curvature for each pixel.
 
         References
         ----------
@@ -330,8 +330,8 @@ class Jerman:
         input : 2D ndarray
             Image that will be filtered.
         get_directions : bool, optional
-            Returns the direction of lowest curvature for each pixel in addition 
-            to the filtered image.
+            Returns the direction perpendicular to highest intensity curvature for 
+            each pixel in addition to the filtered image.
 
         Returns
         -------

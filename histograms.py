@@ -30,7 +30,7 @@ class LHE:
     def get_descriptor(self):
         return "lhe_areas{}".format(self.area_num)
 
-    def compute(self, input):
+    def compute(self, input, get_directions=False):
         """
         Computes filter results for the given image.
         
@@ -47,6 +47,8 @@ class LHE:
         beta : float, optional
             Value at which the normalized Histogram is clipped. 
             Takes values between 0 and 1.
+        get_direction : bool, optional
+            Streamlines interface for use in pipelines.
         
         Returns
         -------
@@ -98,7 +100,10 @@ class LHE:
             weights = padded_weights[weight_offsets[0]:input.shape[0]+weight_offsets[0], weight_offsets[1]:input.shape[1]+weight_offsets[1]]
             output = output + weights * mapped_image
 
-        return output
+        if get_directions == False:
+            return output
+        else:
+            return output, None
 
     def _area_histogram(self, input, area):
         """
