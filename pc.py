@@ -22,6 +22,12 @@ class Log_Gabor:
         """
         self.orientations = orientations
         self.scales = scales
+    
+    def get_descriptor(self):
+        return "logGabor_scales{}-{}_orientations{}".format(np.min(self.scales), 
+                                                                         np.max(self.scales),
+                                                                         self.orientations.size)
+ 
 
     def compute(self, input):
         """
@@ -82,7 +88,7 @@ class Log_Gabor:
 
 
 class PC:
-    def __init__(self, orientations_num, scales, cutoff, gain) -> None:
+    def __init__(self, orientations_num, scales, cutoff, gain, mode='sum') -> None:
         """
         Phase Congruency [1]_ for 2D images.
 
@@ -108,8 +114,18 @@ class PC:
         self.scales = scales
         self.cutoff = cutoff
         self.gain = gain
+        self.mode = mode
+
+    def get_descriptor(self):
+        return "pc_scales{}-{}_orientations{}_cutoff{}_gain{}_mode{}".format(np.min(self.scales), 
+                                                                         np.max(self.scales),
+                                                                         self.orientations.size,
+                                                                         self.cutoff,
+                                                                         self.gain,
+                                                                         self.mode)
+   
     
-    def compute(self, input, mode='sum'):
+    def compute(self, input):
         """
         Computes filter results for the given image.
 
@@ -134,9 +150,9 @@ class PC:
         ----------
         .. [1] Kovesi, Peter. “Image Features from Phase Congruency.” (1995).
         """
-        if mode == 'sum':
+        if self.mode == 'sum':
             return self._compute_pc(input)
-        if mode == 'max':
+        if self.mode == 'max':
             phase_congruencies = np.empty(self.scales.shape + input.shape)
             for i, scale in enumerate(self.scales):
                 phase_congruencies[i] = self._compute_pc(input, scale)

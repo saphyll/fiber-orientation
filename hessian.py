@@ -156,6 +156,11 @@ class Frangi:
         self.scales = scales
         self.blobness = blobness
         return
+    
+    def get_descriptor(self):
+        return "frangi_scales{}-{}_blobness{}".format(np.min(self.scales), 
+                                                      np.max(self.scales),
+                                                      self.blobness)
 
     def compute(self, input, get_directions=False):
         """
@@ -238,6 +243,9 @@ class Meijering:
         """
         self.scale = scale
         return
+    
+    def get_descriptor(self):
+        return "meijering_scale{}".format(self.scale)
 
     def compute(self, input, get_directions=False):
         """
@@ -306,6 +314,11 @@ class Jerman:
         """
         self.scales = scales
         self.tau = tau
+
+    def get_descriptor(self):
+        return "jerman_scales{}-{}_tau{}".format(np.min(self.scales), 
+                                                      np.max(self.scales),
+                                                      self.tau)
 
     def compute(self, input, get_directions=False):
         """

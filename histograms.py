@@ -27,6 +27,9 @@ class LHE:
         else:
             self.area_num = area_num
 
+    def get_descriptor(self):
+        return "lhe_areas{}".format(self.area_num)
+
     def compute(self, input):
         """
         Computes filter results for the given image.
@@ -169,6 +172,9 @@ class CLAHE(LHE):
         super().__init__(area_num)
         self.beta = beta
 
+    def get_descriptor(self):
+        return "clahe_areas{}_beta{}".format(self.area_num, self.beta)
+    
     def _area_histogram(self, input, area):
         """
         Generates the histogram with clipped contrast for the given area.
@@ -230,6 +236,9 @@ class CLHE(LHE):
         """
         super().__init__(area_num)
         self.alpha = alpha
+
+    def get_descriptor(self):
+        return "clhe_areas{}_alpha{}".format(self.area_num, self.alpha)
     
     def _area_histogram(self, input, area):
         """
@@ -261,6 +270,9 @@ class GHE:
         """
         Global Histogram Equalization filter for 16-bit grayscale images.
         """
+    
+    def get_descriptor(self):
+        return "ghe_areas".format(self.area_num)
 
     def compute(input):
         """

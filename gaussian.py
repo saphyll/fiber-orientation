@@ -39,6 +39,13 @@ class AGK:
         self.orientations = np.arange(0, (orientations_num-1)*np.pi/orientations_num, np.pi/orientations_num)
         self.kernels = self._create_kernels()
     
+    def get_descriptor(self):
+        return "agk_scales{}-{}_anisotropies{}-{}_orientations{}".format(np.min(self.scales), 
+                                                                         np.max(self.scales),
+                                                                         np.min(self.anisotropies),
+                                                                         np.max(self.anisotropies),
+                                                                         self.orientations.size)
+
     def compute(self, input, invert=False, get_directions=False):
         """
         Computes filter results for the given image and optionally returns a 
@@ -144,6 +151,13 @@ class FOAGK(AGK):
         """
         super().__init__(scales, anisotropies, orientations_num)
 
+    def get_descriptor(self):
+        return "foagk_scales{}-{}_anisotropies{}-{}_orientations{}".format(np.min(self.scales), 
+                                                                         np.max(self.scales),
+                                                                         np.min(self.anisotropies),
+                                                                         np.max(self.anisotropies),
+                                                                         self.orientations.size)
+    
     def _create_kernels(self):
         kernels = []
         for orientation in self.orientations:
@@ -188,6 +202,13 @@ class SOAGK(AGK):
             :DOI:`10.1016/j.sigpro.2015.03.024`
         """
         super().__init__(scales, anisotropies, orientations_num)
+
+    def get_descriptor(self):
+        return "soagk_scales{}-{}_anisotropies{}-{}_orientations{}".format(np.min(self.scales), 
+                                                                         np.max(self.scales),
+                                                                         np.min(self.anisotropies),
+                                                                         np.max(self.anisotropies),
+                                                                         self.orientations.size)
 
     def _create_kernels(self):
         kernels = []
