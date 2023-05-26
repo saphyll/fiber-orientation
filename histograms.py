@@ -47,13 +47,14 @@ class LHE:
         beta : float, optional
             Value at which the normalized Histogram is clipped. 
             Takes values between 0 and 1.
-        get_direction : bool, optional
+        get_directions : bool, optional
             Streamlines interface for use in pipelines.
         
         Returns
         -------
         output : 2D ndarray
             Equalized image.
+        out_directions : None, optional
         """
         output = np.empty(input.shape)
         area_size = np.array([input.shape[0]//self.area_num + 1, input.shape[1]//self.area_num + 1])
