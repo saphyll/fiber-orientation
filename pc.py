@@ -162,7 +162,8 @@ class PC:
             if self.get_direction == False:
                 return phase_congruencies
             else:
-                hessian = Hessian(input, np.max(self.scales))
+                hessian_scale = np.max(self.scales) * np.max(self.scales)//2
+                hessian = Hessian(input, hessian_scale)
                 direction_map = hessian.get_eigenvector_directions()
                 return phase_congruencies, direction_map
 
@@ -174,7 +175,8 @@ class PC:
             if get_directions == False:
                 return phase_congruencies
             else:
-                hessian = Hessian(input, np.max(self.scales))
+                hessian_scale = np.max(self.scales) * np.max(self.scales)//2
+                hessian = Hessian(input, hessian_scale)
                 direction_map = hessian.get_eigenvector_directions()
                 return phase_congruencies, direction_map
 
