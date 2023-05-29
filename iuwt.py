@@ -1,5 +1,6 @@
 import numpy as np
 import cv2
+from hessian import Hessian
 
 class IUWT:
     def __init__(self, scales, threshold) -> None:
@@ -63,11 +64,17 @@ class IUWT:
 
         percentile = np.percentile(output, self.threshold)
         output = np.where(output > percentile, output, np.min(output))
+        #normalize output
+        output = output - np.min(output)
+        output = output / np.max(output) 
 
         if get_directions == False:
             return output
         else:
-            return output, None
+            hessian_scale = np.max(self.scales) * np.max(self.scales)//2
+            hessian = Hessian(input, hessian_scale)
+            direction_map = hessian.get_eigenvector_directions()
+            return output, direction_map
 
     def _get_scaled_filters(self):
         """
