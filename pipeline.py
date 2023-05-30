@@ -59,15 +59,14 @@ class Pipeline:
             If true, the image will be saved in a folder structure representing 
             the processing steps and their parameters.
         """
-        if self.result_image == None:
+        if self.result_image is None:
             pass
 
-        if auto_path == True:
-            for i, step in enumerate(self.steps):
-                if i < len(self.steps)-1:
-                    save_path = save_path + "/" + step.get_descriptor()
-                elif i == len(self.steps)-1:
-                    last_descriptor = step.get_descriptor()
+        for i, step in enumerate(self.steps):
+            if i < len(self.steps)-1 and auto_path == True:
+                save_path = save_path + "/" + step.get_descriptor()
+            elif i == len(self.steps)-1:
+                last_descriptor = step.get_descriptor()
 
         if not os.path.exists(save_path):
                 os.makedirs(save_path)
@@ -91,15 +90,14 @@ class Pipeline:
             If true, the image will be saved in a folder structure representing 
             the processing steps and their parameters.
         """
-        if self.orientation_map == None:
+        if self.orientation_map is None:
             pass
         
-        if auto_path == True:
-            for i, step in enumerate(self.steps):
-                if i < len(self.steps)-1:
-                    save_path = save_path + "/" + step.get_descriptor()
-                elif i == len(self.steps)-1:
-                    last_descriptor = step.get_descriptor()
+        for i, step in enumerate(self.steps):
+            if i < len(self.steps)-1 and auto_path == True:
+                save_path = save_path + "/" + step.get_descriptor()
+            elif i == len(self.steps)-1:
+                last_descriptor = step.get_descriptor()
 
         if not os.path.exists(save_path):
                 os.makedirs(save_path)
@@ -130,15 +128,14 @@ class Pipeline:
             If true, the image will be saved in a folder structure representing 
             the processing steps and their parameters.
         """
-        if self.orientation_map == None or self.result_image == None:
+        if self.orientation_map is None or self.result_image is None:
             pass
 
-        if auto_path == True:
-            for i, step in enumerate(self.steps):
-                if i < len(self.steps)-1:
-                    save_path = save_path + "/" + step.get_descriptor()
-                elif i == len(self.steps)-1:
-                    last_descriptor = step.get_descriptor()
+        for i, step in enumerate(self.steps):
+            if i < len(self.steps)-1 and auto_path == True:
+                save_path = save_path + "/" + step.get_descriptor()
+            elif i == len(self.steps)-1:
+                last_descriptor = step.get_descriptor()
 
         if not os.path.exists(save_path):
                 os.makedirs(save_path)
@@ -171,15 +168,14 @@ class Pipeline:
             If true, the image will be saved in a folder structure representing 
             the processing steps and their parameters.
         """
-        if self.orientation_map == None or self.result_image == None:
+        if self.orientation_map is None or self.result_image is None:
             pass
 
-        if auto_path == True:
-            for i, step in enumerate(self.steps):
-                if i < len(self.steps)-1:
-                    save_path = save_path + "/" + step.get_descriptor()
-                elif i == len(self.steps)-1:
-                    last_descriptor = step.get_descriptor()
+        for i, step in enumerate(self.steps):
+            if i < len(self.steps)-1 and auto_path == True:
+                save_path = save_path + "/" + step.get_descriptor()
+            elif i == len(self.steps)-1:
+                last_descriptor = step.get_descriptor()
 
         if not os.path.exists(save_path):
                 os.makedirs(save_path)
@@ -230,5 +226,5 @@ class Pipeline:
         """
         if self.orientation_map == None or self.result_image == None:
             pass
-        
+
         visuals.interactive_orientation_segmentation(self.result_image, self.orientation_map, orientation_num)
