@@ -159,7 +159,7 @@ class PC:
         """
         if self.mode == 'sum':
             phase_congruencies = self._compute_pc(input)
-            if self.get_direction == False:
+            if get_directions == False:
                 return phase_congruencies
             else:
                 hessian_scale = np.max(self.scales) * np.max(self.scales)//2
