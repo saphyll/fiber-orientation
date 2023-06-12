@@ -7,6 +7,7 @@ class IUWT:
         """
         Isotropic Undecimated Wavelet Transform as described by Meijering et al. [1]_ 
         for 2D images.
+
         Parameters
         ----------
         scales : 1D ndarray, dtype=int
@@ -66,12 +67,12 @@ class IUWT:
         output = np.where(output > percentile, output, np.min(output))
         #normalize output
         output = output - np.min(output)
-        output = output / np.max(output) 
+        output = output / (np.max(output) + 1e-10)
 
         if get_directions == False:
             return output
         else:
-            hessian_scale = np.max(self.scales) * np.max(self.scales)//2
+            hessian_scale = np.max(self.scales) * 4
             hessian = Hessian(input, hessian_scale)
             direction_map = hessian.get_eigenvector_directions()
             return output, direction_map
