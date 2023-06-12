@@ -159,6 +159,9 @@ class PC:
         """
         if self.mode == 'sum':
             phase_congruencies = self._compute_pc(input)
+            #normalize output
+            phase_congruencies = phase_congruencies - np.min(phase_congruencies)
+            phase_congruencies = phase_congruencies / (np.max(phase_congruencies) + 1e-10)
             if get_directions == False:
                 return phase_congruencies
             else:
@@ -172,6 +175,9 @@ class PC:
             for i, scale in enumerate(self.scales):
                 phase_congruencies[i] = self._compute_pc(input, scale)
             phase_congruencies = np.max(phase_congruencies, axis=0)
+            #normalize output
+            phase_congruencies = phase_congruencies - np.min(phase_congruencies)
+            phase_congruencies = phase_congruencies / (np.max(phase_congruencies) + 1e-10)
             if get_directions == False:
                 return phase_congruencies
             else:
