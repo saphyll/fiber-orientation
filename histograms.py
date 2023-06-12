@@ -74,8 +74,8 @@ class LHE:
                 histo_area = input[area_start_x:area_end_x,area_start_y:area_end_y]
 
                 histo, bins = self._area_histogram(input, histo_area)            
-                cdf = np.round((2**16-1) * np.cumsum(histo))         
-                
+                cdf = np.round((2**16-1) * np.cumsum(histo))
+
                 #define mapping regions and compute mapped images
                 area_start_x = np.clip(area_mid_x - area_size[0], 0, None)
                 area_start_y = np.clip(area_mid_y - area_size[1], 0, None)
@@ -205,13 +205,12 @@ class CLAHE(LHE):
         redist_amount = excess / np.count_nonzero(histo)
         histo = np.clip(histo, None, self.beta)
         for i in range(2**16):
-            if histo[i] > 0:
-                if histo[i] < self.beta - redist_amount:
-                    excess = excess - redist_amount
-                    histo[i] = histo[i] + redist_amount
-                elif histo[i] < self.beta:
-                    excess = excess - (self.beta - histo[i])
-                    histo[i] = self.beta
+            if histo[i] < self.beta - redist_amount:
+                excess = excess - redist_amount
+                histo[i] = histo[i] + redist_amount
+            elif histo[i] < self.beta:
+                excess = excess - (self.beta - histo[i])
+                histo[i] = self.beta
         histo = np.where(histo != 0, histo + excess/np.count_nonzero(histo), histo)
         return histo, bins
     
