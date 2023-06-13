@@ -1,0 +1,2 @@
+# Fiber-Orientations
+This repository provides Python functions and classes for the detection and visual enhancement of curvilinear structures in greyscale images, automatic analysis of their direction and visualization of detected directions.
