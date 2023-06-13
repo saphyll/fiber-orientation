@@ -284,13 +284,13 @@ class Pipeline:
         save_path: int
             Path to the location where the CSV-files will be saved.
         """
-        csv_path_enhanced_image = "{}/temp/{}_enhanced.csv".format(save_path, self.image_name)
-        csv_path_orientations = "{}/temp/{}_orientations.csv".format(save_path, self.image_name)
+        csv_path_filtered_image = "{}/csv/{}_filtered.csv".format(save_path, self.image_name)
+        csv_path_orientations = "{}/csv/{}_orientations.csv".format(save_path, self.image_name)
         
-        if not os.path.exists("{}/temp/".format(save_path)):
-                os.makedirs("{}/temp/".format(save_path))
+        if not os.path.exists("{}/csv/".format(save_path)):
+                os.makedirs("{}/csv/".format(save_path))
         
-        with open(csv_path_enhanced_image, "w", newline="") as csvfile:
+        with open(csv_path_filtered_image, "w", newline="") as csvfile:
             np.savetxt(csvfile, self.result_image, fmt='%3.5f', delimiter=";")
         with open(csv_path_orientations, "w", newline="") as csvfile:
             np.savetxt(csvfile, self.orientation_map, fmt='%3.5f', delimiter=";")
