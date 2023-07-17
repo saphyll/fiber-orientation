@@ -74,7 +74,7 @@ class Pipeline:
         fig, ax = plt.subplots(figsize=(self.result_image.shape[0]/100, self.result_image.shape[1]/100))
         ax.imshow(self.result_image)
         ax.axis('off')
-        plt.savefig("{}/{}_{}.tif".format(save_path, self.image_name, last_descriptor))
+        plt.savefig("{}/processed_{}_{}.tif".format(save_path, self.image_name, last_descriptor))
         plt.close()
 
     def save_orientation_histograms(self, save_path, auto_path=True):
@@ -110,10 +110,10 @@ class Pipeline:
         ax.bar(bins, orientation_histo, width=.5)
         ax.yaxis.set_major_formatter(mpl.ticker.PercentFormatter())
         
-        plt.savefig("{}/{}_{}.tif".format(save_path, self.image_name, last_descriptor))
+        plt.savefig("{}/orientation_histograms_{}_{}.tif".format(save_path, self.image_name, last_descriptor))
         plt.close()
 
-        csv_path = "{}/orientation_histograms_{}.csv".format(save_path, last_descriptor)
+        csv_path = "{}/orientation_histograms_{}_{}.csv".format(save_path, self.image_name, last_descriptor)
         with open(csv_path, "a", newline="") as csvfile:
             csvfile.write("{},".format(self.image_name))
             orientation_histo = np.round(orientation_histo, 5)
@@ -152,7 +152,7 @@ class Pipeline:
         ax.imshow(self.orientation_map, alpha=self.result_image, cmap=mpl.colormaps['hsv'])
         ax.axis('off')
 
-        plt.savefig("{}/{}_{}.tif".format(save_path, self.image_name, last_descriptor))
+        plt.savefig("{}/colored_{}_{}.tif".format(save_path, self.image_name, last_descriptor))
         plt.close()
 
     def save_tiled_orientations(self, tile_num, save_path, auto_path=True):
@@ -219,7 +219,7 @@ class Pipeline:
         ax.imshow(bar_tiles, alpha=bar_tiles*(1-entropy_tiles), cmap=mpl.colormaps['gray'])
 
         plt.box(False)
-        plt.savefig("{}/{}_{}.tif".format(save_path, self.image_name, last_descriptor))
+        plt.savefig("{}/tiled_{}_{}.tif".format(save_path, self.image_name, last_descriptor))
         plt.close()
 
     def show_interactive_orientations(self, orientation_num):
