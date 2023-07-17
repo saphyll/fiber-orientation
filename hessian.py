@@ -67,8 +67,11 @@ class Hessian:
         eigenvalues : ndarray
             Eigenvalues of the input.
         """
+        eigenvalues = self.eigenvalues
+
         if invert == True:
-            eigenvalues = self.eigenvalues * -1
+            self.eigenvalues = self.eigenvalues * -1
+            eigenvalues = self.eigenvalues
 
         if sorted_by_abs == True:
             eigenvalues, _ = self._sort_by_abs()
@@ -132,7 +135,7 @@ class Hessian:
         return symmetric_image
 
 class Frangi:
-    def __init__(self, scales, blobness) -> None:
+    def __init__(self, scales, blobness, invert=False) -> None:
         """
         Filter by Frangi et al. [1]_ for 2D images.
         Parameters
@@ -143,6 +146,9 @@ class Frangi:
             Parameter for calculation of normalized eigenvalues.
             High values will shrink filtered structures and low 
             values will expand filtered structures.
+        invert : bool
+            When the parameter is False, bright lines are filtered, otherwise 
+            dark lines are filtered.
 
         References
         ----------
@@ -155,6 +161,7 @@ class Frangi:
         """
         self.scales = scales
         self.blobness = blobness
+        self.invert = invert
         return
     
     def get_descriptor(self):
@@ -195,7 +202,7 @@ class Frangi:
 
         for i, scale in enumerate(self.scales):
             hessian = Hessian(input, scale)
-            eigenvals = hessian.get_eigenvalues(sorted_by_abs=True)
+            eigenvals = hessian.get_eigenvalues(sorted_by_abs=True, invert=self.invert)
 
             norm = np.sqrt(eigenvals[0]**2 + eigenvals[1]**2)
             max_norm = np.max(norm)
@@ -224,13 +231,16 @@ class Frangi:
 
 
 class Meijering:
-    def __init__(self, scale) -> None:
+    def __init__(self, scale, invert=False) -> None:
         """
         Filter by Meijering et al. [1]_ for 2D images.
         Parameters
         ----------
         scale : int
             Expected structure widths.
+        invert : bool
+            When the parameter is False, bright lines are filtered, otherwise 
+            dark lines are filtered.
 
         References
         ----------
@@ -242,6 +252,7 @@ class Meijering:
             :DOI:`10.1007/BFb0056195`
         """
         self.scale = scale
+        self.invert = invert
         return
     
     def get_descriptor(self):
@@ -283,7 +294,7 @@ class Meijering:
         input = np.pad(input, [pad_x, pad_y], mode='edge')
 
         hessian = Hessian(input, self.scale)
-        eigenvals = hessian.get_eigenvalues()
+        eigenvals = hessian.get_eigenvalues(invert=self.invert)
 
         mod_eigens_1 = eigenvals[0] - eigenvals[1]/3
         mod_eigens_2 = eigenvals[1] - eigenvals[0]/3
@@ -299,7 +310,7 @@ class Meijering:
             return out_image
 
 class Jerman:
-    def __init__(self, scales, tau) -> None:
+    def __init__(self, scales, tau, invert) -> None:
         """
         Filter by Jerman et al. [1]_ for 2D images.
         Parameters
@@ -310,10 +321,14 @@ class Jerman:
             Parameter for calculation of normalized eigenvalues.
             High values will shrink filtered structures and low 
             values will expand filtered structures.
+        invert : bool
+            When the parameter is False, bright lines are filtered, otherwise 
+            dark lines are filtered.
         
         """
         self.scales = scales
         self.tau = tau
+        self.invert = invert
 
     def get_descriptor(self):
         return "jerman_scales{}-{}_tau{}".format(np.min(self.scales), 
@@ -353,7 +368,7 @@ class Jerman:
 
         for i, scale in enumerate(self.scales):
             hessian = Hessian(input, scale)
-            eigenvals = hessian.get_hessian_eigvals(sorted_by_abs=True, invert=True)
+            eigenvals = hessian.get_eigenvalues(sorted_by_abs=True, invert=not self.invert)
 
             eigen2 = eigenvals[1]
 

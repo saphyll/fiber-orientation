@@ -1,7 +1,6 @@
 import numpy as np
 import cv2
 from enum import Enum
-import matplotlib.pyplot as plt
 
 class kernel_type(Enum):
     GK = 0
@@ -10,7 +9,7 @@ class kernel_type(Enum):
     SOAGK = 3
 
 class AGK:
-    def __init__(self, scales, anisotropies, orientations_num, invert=True) -> None:
+    def __init__(self, scales, anisotropies, orientations_num, invert=False) -> None:
         """
         Zero order (anisotropic) Gaussian Filter by Lopez-Molina et al. [1]_ for 2D images.
         Parameters
@@ -92,7 +91,7 @@ class AGK:
         for o, orientation in enumerate(self.orientations):
             for kernel in self.kernels[o]:
                     #invert kernel for detection of bright lines
-                    if self.invert == True:
+                    if self.invert == False:
                         kernel = kernel * -1
 
                     kernel_output = cv2.filter2D(input, -1, kernel)
@@ -149,7 +148,7 @@ class AGK:
         return kernel / np.sum(np.abs(kernel))
 
 class FOAGK(AGK):
-    def __init__(self, scales, anisotropies, orientations_num, invert=True) -> None:
+    def __init__(self, scales, anisotropies, orientations_num, invert=False) -> None:
         """
         First order (anisotropic) Gaussian Filter by Lopez-Molina et al. [1]_ for 2D images.
         Parameters
@@ -173,7 +172,7 @@ class FOAGK(AGK):
             Signal Processing, Volume 116, 2015, Pages 55-67, ISSN 0165-1684.
             :DOI:`10.1016/j.sigpro.2015.03.024`
         """
-        super().__init__(scales, anisotropies, orientations_num)
+        super().__init__(scales, anisotropies, orientations_num, invert)
 
     def get_descriptor(self):
         return "foagk_scales{}-{}_anisotropies{}-{}_orientations{}".format(np.min(self.scales), 
@@ -201,7 +200,7 @@ class FOAGK(AGK):
         return kernels
 
 class SOAGK(AGK):
-    def __init__(self, scales, anisotropies, orientations_num, invert=True) -> None:
+    def __init__(self, scales, anisotropies, orientations_num, invert=False) -> None:
         """
         Second order (anisotropic) Gaussian Filter by Lopez-Molina et al. [1]_ for 2D images.
         Parameters
@@ -225,7 +224,7 @@ class SOAGK(AGK):
             Signal Processing, Volume 116, 2015, Pages 55-67, ISSN 0165-1684.
             :DOI:`10.1016/j.sigpro.2015.03.024`
         """
-        super().__init__(scales, anisotropies, orientations_num)
+        super().__init__(scales, anisotropies, orientations_num, invert)
 
     def get_descriptor(self):
         return "soagk_scales{}-{}_anisotropies{}-{}_orientations{}".format(np.min(self.scales), 
